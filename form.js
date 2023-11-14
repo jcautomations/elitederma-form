@@ -95,7 +95,6 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
         border: 1px solid #ccc;
         padding: 10px;
       "
-      pattern="^\+?[0-9]{9,12}$"
       required=""
     />
     <span
