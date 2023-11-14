@@ -347,8 +347,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
 
 `;
 
-const innerScript = `
-// Add event listener
+const innerScript = `// Add event listener
 var btn = document.getElementById("submit");
 var form = document.getElementById("elitedermaForm");
 
@@ -427,8 +426,7 @@ function submitData(e) {
   } else {
     //console.log("some error");
   }
-}
-`;
+}`;
 
 async function createForm() {
   var formHTML = htmlForm;
