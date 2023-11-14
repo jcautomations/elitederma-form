@@ -1,4 +1,4 @@
-import { htmlForm } from "./formbody";
+import { htmlForm } from "https://cdn.jsdelivr.net/gh/thegalluzz/testlib@master/formbody.js";
 
 function validateData(e) {
     var formData = new FormData(form);
