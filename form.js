@@ -16,7 +16,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
       name="your-name"
       placeholder=""
       style="
-        width: 100%;
+        width: 50%;
         min-width: 200px;
         border: 1px solid #ccc;
         padding: 10px;
@@ -41,7 +41,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
       name="your-surname"
       placeholder=""
       style="
-        width: 100%;
+        width: 50%;
         min-width: 200px;
         border: 1px solid #ccc;
         padding: 10px;
@@ -66,7 +66,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
       name="your-email"
       placeholder=""
       style="
-        width: 100%;
+        width: 50%;
         min-width: 200px;
         border: 1px solid #ccc;
         padding: 10px;
@@ -90,7 +90,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
       name="your-phone"
       placeholder=""
       style="
-        width: 100%;
+        width: 50%;
         min-width: 200px;
         border: 1px solid #ccc;
         padding: 10px;
