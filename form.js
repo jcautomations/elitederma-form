@@ -1,11 +1,5 @@
 import { htmlForm } from "./formbody";
 
-var btn = document.getElementById("submit");
-var form = document.getElementById("elitedermaForm");
-
-form.addEventListener("change", validateData, true);
-btn.addEventListener("click", submitData);
-
 function validateData(e) {
     var formData = new FormData(form);
 
@@ -88,6 +82,12 @@ function createForm() {
 
     // Append the form to the body or a specific element
     document.getElementById("form-container").innerHTML = formHTML;
+
+    var btn = document.getElementById("submit");
+    var form = document.getElementById("elitedermaForm");
+
+    form.addEventListener("change", validateData, true);
+    btn.addEventListener("click", submitData);
 }
 
 window.onload = createForm;
