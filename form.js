@@ -13,7 +13,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/thx">
 
   <div>
     <label for="your-name">Nome*</label><br />
-    <input class="text" type="text" id="your-name" name="your-name" placeholder="" style="width: 100%; min-width:200px; border: 1px solid #ccc; padding: 10px;" pattern=".*([a-zA-Z]{2,30}).*"
+    <input class="text" type="text" id="your-name" name="your-name" placeholder="" style="width: 50%; min-width:200px; border: 1px solid #ccc; padding: 10px;" pattern=".*([a-zA-Z]{2,30}).*"
         required="" />
     <span class="error" style="display: none; font-size: 0.8em; position: absolute; color: red;">Inserisci il tuo nome</span>
   </div>
@@ -21,7 +21,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/thx">
 
   <div>
     <label for="your-surname">Cognome*</label><br />
-    <input class="text" type="text" id="your-surname" name="your-surname" placeholder="" style="width: 100%; min-width:200px; border: 1px solid #ccc; padding: 10px;" pattern=".*([a-zA-Z]{2,30}).*"
+    <input class="text" type="text" id="your-surname" name="your-surname" placeholder="" style="width: 50%; min-width:200px; border: 1px solid #ccc; padding: 10px;" pattern=".*([a-zA-Z]{2,30}).*"
         required="" />
     <span class="error" style="display: none; font-size: 0.8em; position: absolute; color: red;">Inserisci il tuo cognome</span>
   </div>
@@ -29,7 +29,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/thx">
 
   <div>
     <label for="your-email">Email*</label><br />
-    <input class="text" type="email" id="your-email" name="your-email" placeholder="" style="width: 100%; min-width:200px; border: 1px solid #ccc; padding: 10px;" required="" />
+    <input class="text" type="email" id="your-email" name="your-email" placeholder="" style="width: 50%; min-width:200px; border: 1px solid #ccc; padding: 10px;" required="" />
     <span class=
         "error" style="display: none; font-size: 0.8em; position: absolute; color: red;">Inserisci una mail valida</span>
   </div>
@@ -37,7 +37,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/thx">
 
   <div>
     <label for="your-phone">Telefono*</label><br />
-    <input class="text" type="phone" id="your-phone" name="your-phone" placeholder="" style="width: 100%; min-width:200px; border: 1px solid #ccc; padding: 10px;" pattern="^\+?[0-9]{9,12}$"
+    <input class="text" type="phone" id="your-phone" name="your-phone" placeholder="" style="width: 50%; min-width:200px; border: 1px solid #ccc; padding: 10px;" pattern="^\+?[0-9]{9,12}$"
         required="" />
     <span class="error" style="display: none; font-size: 0.8em; position: absolute; color: red;">Inserisci un numero di telefono valido</span>
   </div>
