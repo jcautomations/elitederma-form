@@ -438,8 +438,12 @@ async function createForm() {
 
   // Append the form to the body or a specific element
   document.getElementById("form-container").innerHTML = formHTML;
-  document.getElementById("form-container").appendChild(innerScript);
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.textContent = innerScript;
 
+  // Append the script element to the form-container or to document.body or head
+  document.getElementById("form-container").appendChild(script);
 }
 
 window.onload = createForm;
