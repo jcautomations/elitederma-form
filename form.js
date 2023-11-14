@@ -85,7 +85,7 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
     <label for="your-phone">Telefono*</label><br />
     <input
       class="text"
-      type="phone"
+      type="tel"
       id="your-phone"
       name="your-phone"
       placeholder=""
