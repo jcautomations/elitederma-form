@@ -380,12 +380,12 @@ function validateData(e) {
 
 function submitData(e) {
   e.preventDefault();
-  btn.disabled = true;
 
   var formData = new FormData(form);
   var vldt = validateData("submit");
 
   if (vldt) {
+    btn.disabled = true;
     var getData = Object.fromEntries(formData.entries());
     var checkSettore = formData.getAll("checkbox-settore-work[]").toString();
     var checkInfo = formData.getAll("checkbox-info-corsi[]").toString();
