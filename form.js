@@ -1,4 +1,4 @@
-<script type="module" src="./formbody"></script>;
+import { htmlForm } from "./formbody";
 
 var btn = document.getElementById("submit");
 var form = document.getElementById("elitedermaForm");
