@@ -347,6 +347,15 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
 
 `;
 
+const innerScript = `
+<script>
+// Add event listener
+var btn = document.getElementById("submit");
+var form = document.getElementById("elitedermaForm");
+
+form.addEventListener("change", validateData, true);
+btn.addEventListener("click", submitData);
+
 function validateData(e) {
   var formData = new FormData(form);
 
@@ -420,19 +429,17 @@ function submitData(e) {
     //console.log("some error");
   }
 }
+</script>
+
+`;
 
 async function createForm() {
   var formHTML = htmlForm;
 
   // Append the form to the body or a specific element
   document.getElementById("form-container").innerHTML = formHTML;
+  document.getElementById("form-container").appendChild(innerScript);
 
-  // Add event listener
-  var btn = document.getElementById("submit");
-  var form = document.getElementById("elitedermaForm");
-
-  form.addEventListener("change", validateData, true);
-  btn.addEventListener("click", submitData);
 }
 
 window.onload = createForm;
