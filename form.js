@@ -348,7 +348,6 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
 `;
 
 const innerScript = `
-<script>
 // Add event listener
 var btn = document.getElementById("submit");
 var form = document.getElementById("elitedermaForm");
@@ -429,8 +428,6 @@ function submitData(e) {
     //console.log("some error");
   }
 }
-</script>
-
 `;
 
 async function createForm() {
