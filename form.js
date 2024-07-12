@@ -1,4 +1,5 @@
-const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
+const htmlForm = `
+<form id="elitedermaForm" name="elitedermaForm" target="/">
   <h1>Contattaci</h1>
 
   <center>
@@ -245,9 +246,25 @@ const htmlForm = `<form id="elitedermaForm" name="elitedermaForm" target="/">
       class="info"
       id="corso8"
       name="checkbox-info-corsi[]"
+      value="Corso AreolArt"
+    />
+    <label for="corso8">Corso AreolArt</label><br />
+    <input
+      type="checkbox"
+      class="info"
+      id="corso9"
+      name="checkbox-info-corsi[]"
+      value="Corso Extension Ciglia"
+    />
+    <label for="corso9">Corso Extension Ciglia</label><br />
+    <input
+      type="checkbox"
+      class="info"
+      id="corso10"
+      name="checkbox-info-corsi[]"
       value="Altro"
     />
-    <label for="corso8">Altro</label>
+    <label for="corso10">Altro</label>
   </div>
   <br />
 
