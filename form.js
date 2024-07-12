@@ -446,8 +446,10 @@ function submitData(e) {
 }`;
 
 async function createForm() {
+  caches
+    .keys()
+    .then((keyList) => Promise.all(keyList.map((key) => caches.delete(key))));
   var formHTML = htmlForm;
-
   // Append the form to the body or a specific element
   document.getElementById("form-container").innerHTML = formHTML;
   var script = document.createElement('script');
