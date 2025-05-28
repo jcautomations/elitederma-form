@@ -446,14 +446,17 @@ function submitData(e) {
 }`;
 
 async function createForm() {
+  /*
+  // Cache removal script
   caches
     .keys()
     .then((keyList) => Promise.all(keyList.map((key) => caches.delete(key))));
+  */
   var formHTML = htmlForm;
   // Append the form to the body or a specific element
   document.getElementById("form-container").innerHTML = formHTML;
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
+  var script = document.createElement("script");
+  script.type = "text/javascript";
   script.textContent = innerScript;
 
   // Append the script element to the form-container or to document.body or head
