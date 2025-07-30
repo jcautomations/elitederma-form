@@ -337,9 +337,27 @@ const htmlForm = `
         class="info"
         id="corso10"
         name="checkbox-info-corsi[]"
+        value="Corso laminazione con protocollo IKE"
+      />
+      <label for="corso10">Corso laminazione con protocollo IKE</label
+      ><br />
+      <input
+        type="checkbox"
+        class="info"
+        id="corso11"
+        name="checkbox-info-corsi[]"
+        value="Corso Remover"
+      />
+      <label for="corso11">Corso Remover</label
+      ><br />
+      <input
+        type="checkbox"
+        class="info"
+        id="corso12"
+        name="checkbox-info-corsi[]"
         value="Altro"
       />
-      <label for="corso10">Altro</label>
+      <label for="corso12">Altro</label>
     </div>
     <br />
 
