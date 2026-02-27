@@ -582,6 +582,82 @@ function submitData(e) {
         window.alert("Si è verificato un errore. Riprova");
         btn.disabled = false;
       } else {
+        try {
+          var phoneStr = getData["your-phone"];
+          var phonesObj;
+          if (phoneStr.charAt(0) === "+") {
+            var phoneMatch = phoneStr.match(/^(\\+\\d{1,3})(\\d+)$/);
+            phonesObj = phoneMatch
+              ? { primaryPhoneCallingCode: phoneMatch[1], primaryPhoneNumber: phoneMatch[2] }
+              : { primaryPhoneNumber: phoneStr };
+          } else if (phoneStr.length > 10) {
+            phonesObj = { primaryPhoneCallingCode: phoneStr.slice(0, 2), primaryPhoneNumber: phoneStr.slice(2) };
+          } else {
+            phonesObj = { primaryPhoneNumber: phoneStr };
+          }
+
+          var regioneMap = {
+            "Abruzzo": "ABRUZZO",
+            "Basilicata": "BASILICATA",
+            "Calabria": "CALABRIA",
+            "Campania": "CAMPANIA",
+            "Emilia Romagna": "EMILIA_ROMAGNA",
+            "Friuli Venezia Giulia": "FRIULI_VENEZIA_GIULIA",
+            "Lazio": "LAZIO",
+            "Liguria": "LIGURIA",
+            "Lombardia": "LOMBARDIA",
+            "Marche": "MARCHE",
+            "Molise": "MOLISE",
+            "Piemonte": "PIEMONTE",
+            "Puglia": "PUGLIA",
+            "Sardegna": "SARDEGNA",
+            "Sicilia": "SICILIA",
+            "Toscana": "TOSCANA",
+            "Trentino Alto Adige": "TRENTINO_ALTO_ADIGE",
+            "Umbria": "UMBRIA",
+            "Val d'Aosta": "VALLE_D_AOSTA",
+            "Veneto": "VENETO"
+          };
+
+          var professioneMap = {
+            "Estetista": "ESTETISTE",
+            "Tatuatore": "TATUATORE",
+            "Lash Maker": "LASHMAKER",
+            "Onicotecnica": "ONICOTECNICA",
+            "Make up artist": "MAKE_UP_ARTIST",
+            "Parrucchiera": "PARRUCCHIERE",
+            "Massaggiatore": "MASSAGGIATORE",
+            "Altro settore": "ALTRO_SETTORE"
+          };
+
+          var regioneVal = regioneMap[getData["menu-regioni-it"]] || getData["menu-regioni-it"].toUpperCase().replace(/ /g, "_");
+          var professioneFirst = getData["checkbox-settore-work[]"].split(",")[0].trim();
+          var professioneVal = professioneMap[professioneFirst] || professioneFirst.toUpperCase().replace(/ /g, "_");
+
+          fetch("https://api.usedalil.ai/rest/people?depth=1", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNDkyMWM1Mi01ZjYxLTRjNTYtOTRjNi0yMTY0NmJiZDExYjUiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiZDQ5MjFjNTItNWY2MS00YzU2LTk0YzYtMjE2NDZiYmQxMWI1Iiwid29ya3NwYWNlTWVtYmVySWQiOiI0MDI1ZGMxZC04MjUwLTRjNjEtOGQzOS03YTA0MTQ0MGRhOTMiLCJ1c2VyV29ya3NwYWNlSWQiOiI2MmRhY2NkMi0zOTNkLTRiM2UtYWQwMS1jZDhiOGE5ZmM5ODMiLCJpYXQiOjE3NzIxMjIyNzksImV4cCI6NDkyNTcyMjI3OCwianRpIjoiMDZmMmVlNDEtNDc4Ni00M2FhLTlhMWQtMzgzNTkwNjI5OTNiIn0.kfVNDJhaMCG9zJ96pV0yUtAYTyNXphq83Ps6I3BzNyI",
+            },
+            body: JSON.stringify({
+              name: {
+                firstName: getData["your-name"],
+                lastName: getData["your-surname"],
+              },
+              phones: phonesObj,
+              emails: {
+                primaryEmail: getData["your-email"],
+              },
+              regione: regioneVal,
+              professione: professioneVal,
+            }),
+          });
+        } catch (e) {
+          console.error("Dalil API error:", e);
+        }
         window.location.href = "https://www.elitederma.it/thankyou/";
       }
     })();
