@@ -583,17 +583,33 @@ function submitData(e) {
         btn.disabled = false;
       } else {
         try {
+          // Phone parsing
           var phoneStr = getData["your-phone"];
           var phonesObj;
           if (phoneStr.charAt(0) === "+") {
             var phoneMatch = phoneStr.match(/^(\\+\\d{1,3})(\\d+)$/);
-            phonesObj = phoneMatch
-              ? { primaryPhoneCallingCode: phoneMatch[1], primaryPhoneNumber: phoneMatch[2] }
-              : { primaryPhoneNumber: phoneStr };
+            if (phoneMatch) {
+              phonesObj = {
+                primaryPhoneCountryCode: "IT",
+                primaryPhoneCallingCode: phoneMatch[1].replace("+", ""),
+                primaryPhoneNumber: phoneMatch[2]
+              };
+            } else {
+              phonesObj = { primaryPhoneCountryCode: "IT", primaryPhoneNumber: phoneStr };
+            }
           } else if (phoneStr.length > 10) {
-            phonesObj = { primaryPhoneCallingCode: phoneStr.slice(0, 2), primaryPhoneNumber: phoneStr.slice(2) };
+            phonesObj = {
+              primaryPhoneCountryCode: "IT",
+              primaryPhoneCallingCode: phoneStr.slice(0, 2),
+              primaryPhoneNumber: phoneStr.slice(2)
+            };
           } else {
-            phonesObj = { primaryPhoneNumber: phoneStr };
+            phonesObj = { primaryPhoneCountryCode: "IT", primaryPhoneNumber: phoneStr };
+          }
+
+          // Generic sanitizer: uppercase, replace non-alphanumeric with _, collapse multiple _
+          function sanitize(val) {
+            return val.toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "");
           }
 
           var regioneMap = {
@@ -619,20 +635,74 @@ function submitData(e) {
             "Veneto": "VENETO"
           };
 
-          var professioneMap = {
-            "Estetista": "ESTETISTE",
+          var settoreMap = {
+            "Estetista": "ESTETISTA",
             "Tatuatore": "TATUATORE",
-            "Lash Maker": "LASHMAKER",
+            "Lash Maker": "LASH_MAKER",
             "Onicotecnica": "ONICOTECNICA",
             "Make up artist": "MAKE_UP_ARTIST",
-            "Parrucchiera": "PARRUCCHIERE",
+            "Parrucchiera": "PARRUCCHIERA",
             "Massaggiatore": "MASSAGGIATORE",
             "Altro settore": "ALTRO_SETTORE"
           };
 
-          var regioneVal = regioneMap[getData["menu-regioni-it"]] || getData["menu-regioni-it"].toUpperCase().replace(/ /g, "_");
-          var professioneFirst = getData["checkbox-settore-work[]"].split(",")[0].trim();
-          var professioneVal = professioneMap[professioneFirst] || professioneFirst.toUpperCase().replace(/ /g, "_");
+          var corsoMap = {
+            "Corso Microblading Base": "MICROBLADING_MICROSHADING",
+            "Corso Microblading Avanzato": "MICROBLADING_MICROSHADING",
+            "Corso trucco permanente con dermografo Base": "TRUCCO_PERMANENTE",
+            "Corso trucco permanente con dermografo Avanzato": "TRUCCO_PERMANENTE",
+            "Corso Microneedling": "MICRO_NEEDLING_NANO_NEEDLING",
+            "Corso Tricopigmentazione": "TRICO_PIGMENTAZIONE",
+            "Corso Laminazione Ciglia e sopracciglia": "LAMINAZIONE_CIGLIA_E_SOPRACCIGLIA",
+            "Corso AreolArt": "AREOLA_ART",
+            "Corso Extension Ciglia": "EXTENSION_CIGLIA",
+            "Corso laminazione con protocollo IKE": "LAMINAZIONE_CIGLIA_E_SOPRACCIGLIA",
+            "Corso Remover": "ALTRO",
+            "Altro": "ALTRO"
+          };
+
+          var giornoMap = {
+            "Lunedì": "LUNEDI",
+            "Martedì": "MARTEDI",
+            "Mercoledì": "MERCOLEDI",
+            "Giovedì": "GIOVEDI",
+            "Venerdì": "VENERDI",
+            "Sabato": "SABATO"
+          };
+
+          var regioneVal = regioneMap[getData["menu-regioni-it"]] || sanitize(getData["menu-regioni-it"]);
+
+          var settoreArr = getData["checkbox-settore-work[]"].split(",").filter(function(v) {
+            return v.trim() !== "";
+          }).map(function(v) {
+            return settoreMap[v.trim()] || sanitize(v.trim());
+          });
+
+          var corsoArr = getData["checkbox-info-corsi[]"].split(",").filter(function(v) {
+            return v.trim() !== "";
+          }).map(function(v) {
+            return corsoMap[v.trim()] || sanitize(v.trim());
+          });
+
+          var giornoVal = giornoMap[getData["menu-giorno"]] || sanitize(getData["menu-giorno"]);
+          var fasciaVal = getData["menu-ora"];
+
+          var dalilBody = {
+            name: {
+              firstName: getData["your-name"],
+              lastName: getData["your-surname"],
+            },
+            phones: phonesObj,
+            emails: {
+              primaryEmail: getData["your-email"],
+            },
+          };
+          if (settoreArr.length > 0) dalilBody.settore = settoreArr;
+          if (settoreArr[0]) dalilBody.professione = settoreArr[0];
+          if (corsoArr.length > 0) dalilBody.corso = corsoArr;
+          if (regioneVal) dalilBody.regione = regioneVal;
+          if (giornoVal) dalilBody.giorno = giornoVal;
+          if (fasciaVal) dalilBody.fasciaOraria = fasciaVal;
 
           fetch("https://api.usedalil.ai/rest/people?depth=1", {
             method: "POST",
@@ -642,18 +712,7 @@ function submitData(e) {
               Authorization:
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNDkyMWM1Mi01ZjYxLTRjNTYtOTRjNi0yMTY0NmJiZDExYjUiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiZDQ5MjFjNTItNWY2MS00YzU2LTk0YzYtMjE2NDZiYmQxMWI1Iiwid29ya3NwYWNlTWVtYmVySWQiOiI0MDI1ZGMxZC04MjUwLTRjNjEtOGQzOS03YTA0MTQ0MGRhOTMiLCJ1c2VyV29ya3NwYWNlSWQiOiI2MmRhY2NkMi0zOTNkLTRiM2UtYWQwMS1jZDhiOGE5ZmM5ODMiLCJpYXQiOjE3NzIxMjIyNzksImV4cCI6NDkyNTcyMjI3OCwianRpIjoiMDZmMmVlNDEtNDc4Ni00M2FhLTlhMWQtMzgzNTkwNjI5OTNiIn0.kfVNDJhaMCG9zJ96pV0yUtAYTyNXphq83Ps6I3BzNyI",
             },
-            body: JSON.stringify({
-              name: {
-                firstName: getData["your-name"],
-                lastName: getData["your-surname"],
-              },
-              phones: phonesObj,
-              emails: {
-                primaryEmail: getData["your-email"],
-              },
-              regione: regioneVal,
-              professione: professioneVal,
-            }),
+            body: JSON.stringify(dalilBody),
           });
         } catch (e) {
           console.error("Dalil API error:", e);
