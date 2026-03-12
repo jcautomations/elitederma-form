@@ -583,29 +583,12 @@ function submitData(e) {
         btn.disabled = false;
       } else {
         try {
-          // Phone parsing
-          var phoneStr = getData["your-phone"];
-          var phonesObj;
-          if (phoneStr.charAt(0) === "+") {
-            var phoneMatch = phoneStr.match(/^(\\+\\d{1,3})(\\d+)$/);
-            if (phoneMatch) {
-              phonesObj = {
-                primaryPhoneCountryCode: "IT",
-                primaryPhoneCallingCode: phoneMatch[1].replace("+", ""),
-                primaryPhoneNumber: phoneMatch[2]
-              };
-            } else {
-              phonesObj = { primaryPhoneCountryCode: "IT", primaryPhoneNumber: phoneStr };
-            }
-          } else if (phoneStr.length > 10) {
-            phonesObj = {
-              primaryPhoneCountryCode: "IT",
-              primaryPhoneCallingCode: phoneStr.slice(0, 2),
-              primaryPhoneNumber: phoneStr.slice(2)
-            };
-          } else {
-            phonesObj = { primaryPhoneCountryCode: "IT", primaryPhoneNumber: phoneStr };
-          }
+          var rawPhone = getData["your-phone"].replace(/^\\+?39/, "");
+          var phonesObj = {
+            primaryPhoneCountryCode: "IT",
+            primaryPhoneCallingCode: "+39",
+            primaryPhoneNumber: rawPhone
+          };
 
           // Sanitizer: strip Italian accents, uppercase, replace non-alphanumeric with _
           function sanitize(val) {
