@@ -607,44 +607,19 @@ function submitData(e) {
             phonesObj = { primaryPhoneCountryCode: "IT", primaryPhoneNumber: phoneStr };
           }
 
-          // Generic sanitizer: uppercase, replace non-alphanumeric with _, collapse multiple _
+          // Sanitizer: strip Italian accents, uppercase, replace non-alphanumeric with _
           function sanitize(val) {
-            return val.toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "");
+            return val
+              .replace(/[àáâã]/g, "a").replace(/[èéêë]/g, "e")
+              .replace(/[ìíîï]/g, "i").replace(/[òóôõ]/g, "o")
+              .replace(/[ùúûü]/g, "u")
+              .toUpperCase()
+              .replace(/[^A-Z0-9]+/g, "_")
+              .replace(/^_|_$/g, "");
           }
 
-          var regioneMap = {
-            "Abruzzo": "ABRUZZO",
-            "Basilicata": "BASILICATA",
-            "Calabria": "CALABRIA",
-            "Campania": "CAMPANIA",
-            "Emilia Romagna": "EMILIA_ROMAGNA",
-            "Friuli Venezia Giulia": "FRIULI_VENEZIA_GIULIA",
-            "Lazio": "LAZIO",
-            "Liguria": "LIGURIA",
-            "Lombardia": "LOMBARDIA",
-            "Marche": "MARCHE",
-            "Molise": "MOLISE",
-            "Piemonte": "PIEMONTE",
-            "Puglia": "PUGLIA",
-            "Sardegna": "SARDEGNA",
-            "Sicilia": "SICILIA",
-            "Toscana": "TOSCANA",
-            "Trentino Alto Adige": "TRENTINO_ALTO_ADIGE",
-            "Umbria": "UMBRIA",
-            "Val d'Aosta": "VALLE_D_AOSTA",
-            "Veneto": "VENETO"
-          };
-
-          var settoreMap = {
-            "Estetista": "ESTETISTA",
-            "Tatuatore": "TATUATORE",
-            "Lash Maker": "LASH_MAKER",
-            "Onicotecnica": "ONICOTECNICA",
-            "Make up artist": "MAKE_UP_ARTIST",
-            "Parrucchiera": "PARRUCCHIERA",
-            "Massaggiatore": "MASSAGGIATORE",
-            "Altro settore": "ALTRO_SETTORE"
-          };
+          // Only exception: "Val d'Aosta" changes word (Val → Valle), regex can't infer that
+          var regioneMap = { "Val d'Aosta": "VALLE_D_AOSTA" };
 
           var corsoMap = {
             "Corso Microblading Base": "MICROBLADING_MICROSHADING",
@@ -661,21 +636,12 @@ function submitData(e) {
             "Altro": "ALTRO"
           };
 
-          var giornoMap = {
-            "Lunedì": "LUNEDI",
-            "Martedì": "MARTEDI",
-            "Mercoledì": "MERCOLEDI",
-            "Giovedì": "GIOVEDI",
-            "Venerdì": "VENERDI",
-            "Sabato": "SABATO"
-          };
-
           var regioneVal = regioneMap[getData["menu-regioni-it"]] || sanitize(getData["menu-regioni-it"]);
 
           var settoreArr = getData["checkbox-settore-work[]"].split(",").filter(function(v) {
             return v.trim() !== "";
           }).map(function(v) {
-            return settoreMap[v.trim()] || sanitize(v.trim());
+            return sanitize(v.trim());
           });
 
           var corsoArr = getData["checkbox-info-corsi[]"].split(",").filter(function(v) {
@@ -684,7 +650,7 @@ function submitData(e) {
             return corsoMap[v.trim()] || sanitize(v.trim());
           });
 
-          var giornoVal = giornoMap[getData["menu-giorno"]] || sanitize(getData["menu-giorno"]);
+          var giornoVal = sanitize(getData["menu-giorno"]);
           var fasciaVal = getData["menu-ora"];
 
           var dalilBody = {
@@ -703,8 +669,10 @@ function submitData(e) {
           if (regioneVal) dalilBody.regione = regioneVal;
           if (giornoVal) dalilBody.giorno = giornoVal;
           if (fasciaVal) dalilBody.fasciaOraria = fasciaVal;
+          dalilBody.categoria = "DA_ASSENGNARE";
+          dalilBody.canale = "ELITEDERMA_IT";
 
-          fetch("https://api.usedalil.ai/rest/people?depth=1", {
+          await fetch("https://api.usedalil.ai/rest/people?depth=1", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
