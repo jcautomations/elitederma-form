@@ -573,15 +573,24 @@ function submitData(e) {
         },
       };
 
-      const response = await fetch(
-        "https://contact-manager-psi-ten.vercel.app/api/contact",
-        d
-      );
+      // contact-manager is best effort: if it fails, the lead still goes to
+      // Dalil and the visitor doesn't see an error.
+      async function sendToContactManager() {
+        try {
+          const response = await fetch(
+            "https://contact-manager-psi-ten.vercel.app/api/contact",
+            d
+          );
+          if (response.status != 200) {
+            console.warn("contact-manager responded " + response.status);
+          }
+        } catch (e) {
+          console.warn("contact-manager request failed:", e);
+        }
+      }
 
-      if (response.status != 200) {
-        window.alert("Si è verificato un errore. Riprova");
-        btn.disabled = false;
-      } else {
+      // Dalil decides the outcome: returns true when the lead is in the CRM.
+      async function sendToDalil() {
         try {
           var rawPhone = getData["your-phone"].replace(/^\\+?39/, "");
           var phonesObj = {
@@ -655,7 +664,7 @@ function submitData(e) {
           dalilBody.categoria = "DA_ASSENGNARE";
           dalilBody.canale = "ELITEDERMA_IT";
 
-          await fetch("https://api.usedalil.ai/rest/people?depth=1", {
+          var dalilResponse = await fetch("https://api.usedalil.ai/rest/people?depth=1", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -665,11 +674,41 @@ function submitData(e) {
             },
             body: JSON.stringify(dalilBody),
           });
+          if (dalilResponse.ok) return true;
+
+          var dalilError = await dalilResponse.text().catch(function () {
+            return "";
+          });
+          // 400 "Duplicate Emails/Phones. Please set a unique one." means the
+          // contact is already in Dalil, so retrying can't help the visitor.
+          if (dalilResponse.status == 400 && /duplicate/i.test(dalilError)) {
+            console.warn("Dalil: contact already exists:", dalilError);
+            return true;
+          }
+          console.error("Dalil API responded " + dalilResponse.status + ":", dalilError);
+          return false;
         } catch (e) {
           console.error("Dalil API error:", e);
+          return false;
         }
-        window.location.href = "https://www.elitederma.it/thankyou/";
       }
+
+      var contactManagerDone = sendToContactManager();
+
+      if (!(await sendToDalil())) {
+        window.alert("Si è verificato un errore. Riprova");
+        btn.disabled = false;
+        return;
+      }
+
+      // Give contact-manager up to 3 s to finish so the redirect doesn't cut it off.
+      await Promise.race([
+        contactManagerDone,
+        new Promise(function (resolve) {
+          setTimeout(resolve, 3000);
+        }),
+      ]);
+      window.location.href = "https://www.elitederma.it/thankyou/";
     })();
   } else {
     //console.log("some error");
